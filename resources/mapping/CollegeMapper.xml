@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.CollegeMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.College">
+    <id column="college_id" jdbcType="INTEGER" property="collegeId" />
+    <result column="college_name" jdbcType="VARCHAR" property="collegeName" />
+    <collection column="college_id" property="majors" select="getMajors" />
+    <collection column="college_id" property="staffs" select="getStaffs" />
+  </resultMap>
+  <resultMap id="LinkMap" type="cafuc.flyeat.zy.model.College">
+    <id column="college_id" jdbcType="INTEGER" property="collegeId" />
+    <result column="college_name" jdbcType="VARCHAR" property="collegeName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    college_id, college_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from college
+    where college_id = #{collegeId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from college
+    where college_name = #{name}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from college
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from college
+    where college_id = #{collegeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.College">
+    <selectKey keyProperty="collegeId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into college (college_name)
+    values (#{collegeName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.College">
+    <selectKey keyProperty="collegeId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into college
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="collegeName != null">
+        college_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="collegeName != null">
+        #{collegeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.College">
+    update college
+    <set>
+      <if test="collegeName != null">
+        college_name = #{collegeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where college_id = #{collegeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.College">
+    update college
+    set college_name = #{collegeName,jdbcType=VARCHAR}
+    where college_id = #{collegeId,jdbcType=INTEGER}
+  </update>
+  <select id="getMajors" resultMap="cafuc.flyeat.zy.mapper.MajorMapper.BaseResultMap">
+    select major_id,major_name,college_id from major where college_id=#{collegeId} 
+  </select>
+  <select id="getStaffs" resultMap="cafuc.flyeat.zy.mapper.StaffMapper.BaseResultMap">
+    select staff_id,staff_name,college_id from staff where college_id=#{collegeId} 
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into college
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].collegeId!=null">
+        college_id,
+      </if>
+      <if test="list[0].collegeName!=null">
+        college_name,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.collegeId!=null">
+          #{item.collegeId,jdbcType=INTEGER},
+        </if>
+        <if test="item.collegeName!=null">
+          #{item.collegeName,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update college
+      <set>
+        <if test="item.collegeName!=null">
+          college_name=#{item.collegeName,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where 
+      college_id = #{item.collegeId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

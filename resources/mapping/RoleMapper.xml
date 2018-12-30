@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.Role">
+    <id column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_value" jdbcType="VARCHAR" property="roleValue" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_id, role_name, role_value
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from zy_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from zy_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.Role">
+    <selectKey keyProperty="roleId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zy_role (role_name, role_value)
+    values (#{roleName,jdbcType=VARCHAR}, #{roleValue,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.Role">
+    <selectKey keyProperty="roleId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zy_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleValue != null">
+        role_value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleValue != null">
+        #{roleValue,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.Role">
+    update zy_role
+    <set>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleValue != null">
+        role_value = #{roleValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.Role">
+    update zy_role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_value = #{roleValue,jdbcType=VARCHAR}
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into zy_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].roleId!=null">
+        role_id,
+      </if>
+      <if test="list[0].roleName!=null">
+        role_name,
+      </if>
+      <if test="list[0].roleValue!=null">
+        role_value,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.roleId!=null">
+          #{item.roleId,jdbcType=INTEGER},
+        </if>
+        <if test="item.roleName!=null">
+          #{item.roleName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.roleValue!=null">
+          #{item.roleValue,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update zy_role
+      <set>
+        <if test="item.roleName!=null">
+          role_name=#{item.roleName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.roleValue!=null">
+          role_value=#{item.roleValue,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where 
+      role_id = #{item.roleId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

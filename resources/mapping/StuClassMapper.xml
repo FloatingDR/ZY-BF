@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.StuClassMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.StuClass">
+    <id column="class_id" jdbcType="INTEGER" property="classId" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="class_year" jdbcType="INTEGER" property="classYear" />
+    <result column="zy_class" jdbcType="TINYINT" property="zyClass" />
+    <result column="college_id" jdbcType="INTEGER" property="collegeId" />
+    <result column="major_id" jdbcType="INTEGER" property="majorId" />
+    <result column="daoyuan_id" jdbcType="INTEGER" property="daoyuanId" />
+    <result column="banzhuren_id" jdbcType="INTEGER" property="banzhurenId" />
+    <association column="class_id" property="stuAmount" select="getStuAmount" />
+    <association column="major_id" property="major" select="getMajor" />
+    <association column="college_id" property="college" select="getCollege" />
+    <association column="banzhuren_id" property="banzhuren" select="getBanzhuren" />
+    <association column="daoyuan_id" property="daoyuan" select="getDaoyuan" />
+    <collection column="class_id" property="classCourseLinks" select="getClassCourseLinks" />
+    <collection column="class_id" property="studentClassLinks" select="getStudentClassLinks" />
+  </resultMap>
+  <resultMap id="LinkMap" type="cafuc.flyeat.zy.model.StuClass">
+    <id column="class_id" jdbcType="INTEGER" property="classId" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="class_year" jdbcType="INTEGER" property="classYear" />
+    <result column="zy_class" jdbcType="TINYINT" property="zyClass" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    class_id, class_year, class_name, zy_class, college_id, major_id, daoyuan_id, banzhuren_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stu_class
+    where class_id = #{classId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from stu_class
+    where class_name = #{name} limit 1
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from stu_class
+    where zy_class = 0
+  </select>
+  <select id="selectZyClasses" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from stu_class
+    where zy_class = 1
+  </select>
+  <select id="searchByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <bind name="name" value="'%' + _parameter + '%'"/>
+    select
+    <include refid="Base_Column_List" />
+    from stu_class
+    where class_name like #{name}
+  </select>
+  <select id="selectByMajor" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from stu_class
+    where major_id = #{majorId, jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from stu_class
+    where class_id = #{classId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.StuClass">
+    <selectKey keyProperty="classId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stu_class (class_name, class_year, zy_class, college_id,
+      major_id, daoyuan_id, banzhuren_id
+      )
+    values (#{className,jdbcType=VARCHAR}, #{classYear,jdbcType=INTEGER}, #{zyClass,jdbcType=TINYINT}, #{collegeId,jdbcType=INTEGER},
+      #{majorId,jdbcType=INTEGER}, #{daoyuanId,jdbcType=INTEGER}, #{banzhurenId,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.StuClass">
+    update stu_class
+    <set>
+      <if test="className != null">
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="classYear != null">
+        class_year = #{classYear,jdbcType=INTEGER},
+      </if>
+      <if test="zyClass != null">
+        zy_class = #{zyClass,jdbcType=TINYINT},
+      </if>
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=INTEGER},
+      </if>
+      <if test="majorId != null">
+        major_id = #{majorId,jdbcType=INTEGER},
+      </if>
+      <if test="daoyuanId != null">
+        daoyuan_id = #{daoyuanId,jdbcType=INTEGER},
+      </if>
+      <if test="banzhurenId != null">
+        banzhuren_id = #{banzhurenId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where class_id = #{classId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.StuClass">
+    update stu_class
+    set class_name = #{className,jdbcType=VARCHAR},
+      class_year = #{classYear,jdbcType=INTEGER},
+      zy_class = #{zyClass,jdbcType=TINYINT},
+      college_id = #{collegeId,jdbcType=INTEGER},
+      major_id = #{majorId,jdbcType=INTEGER},
+      daoyuan_id = #{daoyuanId,jdbcType=INTEGER},
+      banzhuren_id = #{banzhurenId,jdbcType=INTEGER}
+    where class_id = #{classId,jdbcType=INTEGER}
+  </update>
+  <select id="getMajor" resultMap="cafuc.flyeat.zy.mapper.MajorMapper.LinkMap">
+    select major_id,major_name,college_id from major where major_id=#{majorId}
+  </select>
+  <select id="getCollege" resultMap="cafuc.flyeat.zy.mapper.CollegeMapper.LinkMap">
+    select college_id,college_name from college where college_id=#{collegeId}
+  </select>
+  <select id="getDaoyuan" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.BaseResultMap">
+    select teacher_id,teacher_name,nation,arrival_date,birthday,cpc,edu_bg,reward,college_id,staff_id,teacher_type from teacher where teacher_id=#{daoyuanId}
+  </select>
+  <select id="getBanzhuren" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.BaseResultMap">
+    select teacher_id,teacher_name,nation,arrival_date,birthday,cpc,edu_bg,reward,college_id,staff_id,teacher_type from teacher where teacher_id=#{banzhurenId}
+  </select>
+  <select id="getClassCourseLinks" resultMap="cafuc.flyeat.zy.mapper.ClassCourseLinkMapper.BaseResultMap">
+    select class_course_id,course_id,class_id,test_date,begin_end_week,learn_year from class_course where class_id=#{classId}
+  </select>
+  <select id="getStudentClassLinks" resultMap="cafuc.flyeat.zy.mapper.StudentClassLinkMapper.BaseResultMap">
+    select id,class_id,student_id from student_class where class_id=#{classId} 
+  </select>
+  <select id="getStuAmount" resultType="java.lang.Integer">
+    select count(*) from student_class where class_id=#{classId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into stu_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].classId!=null">
+        class_id,
+      </if>
+      <if test="list[0].className!=null">
+        class_name,
+      </if>
+      <if test="list[0].classYear!=null">
+        class_year,
+      </if>
+      <if test="list[0].zyClass!=null">
+        zy_class,
+      </if>
+      <if test="list[0].collegeId!=null">
+        college_id,
+      </if>
+      <if test="list[0].majorId!=null">
+        major_id,
+      </if>
+      <if test="list[0].daoyuanId!=null">
+        daoyuan_id,
+      </if>
+      <if test="list[0].banzhurenId!=null">
+        banzhuren_id,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.classId!=null">
+          #{item.classId,jdbcType=INTEGER},
+        </if>
+        <if test="item.className!=null">
+          #{item.className,jdbcType=VARCHAR},
+        </if>
+        <if test="item.classYear!=null">
+          #{item.classYear,jdbcType=INTEGER},
+        </if>
+        <if test="item.zyClass!=null">
+          #{item.zyClass,jdbcType=TINYINT},
+        </if>
+        <if test="item.collegeId!=null">
+          #{item.collegeId,jdbcType=INTEGER},
+        </if>
+        <if test="item.majorId!=null">
+          #{item.majorId,jdbcType=INTEGER},
+        </if>
+        <if test="item.daoyuanId!=null">
+          #{item.daoyuanId,jdbcType=INTEGER},
+        </if>
+        <if test="item.banzhurenId!=null">
+          #{item.banzhurenId,jdbcType=INTEGER},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update stu_class
+      <set>
+        <if test="item.className!=null">
+          class_name=#{item.className,jdbcType=VARCHAR},
+        </if>
+        <if test="item.classYear!=null">
+          class_name=#{item.classYear,jdbcType=VARCHAR},
+        </if>
+        <if test="item.zyClass!=null">
+          zy_class=#{item.zyClass,jdbcType=TINYINT},
+        </if>
+        <if test="item.collegeId!=null">
+          college_id=#{item.collegeId,jdbcType=INTEGER},
+        </if>
+        <if test="item.majorId!=null">
+          major_id=#{item.majorId,jdbcType=INTEGER},
+        </if>
+        <if test="item.daoyuanId!=null">
+          daoyuan_id=#{item.daoyuanId,jdbcType=INTEGER},
+        </if>
+        <if test="item.banzhurenId!=null">
+          banzhuren_id=#{item.banzhurenId,jdbcType=INTEGER},
+        </if>
+      </set>
+      where 
+      class_id = #{item.classId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

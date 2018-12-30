@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.PaperMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.Paper">
+    <id column="paper_id" jdbcType="INTEGER" property="paperId" />
+    <result column="paper_name" jdbcType="VARCHAR" property="paperName" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="learn_year" jdbcType="VARCHAR" property="learnYear" />
+    <association column="paper_id" property="studentPaper" select="getStudentPaper" />
+    <association column="teacher_id" property="teacher" select="getTeacher" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    paper_id, paper_name, teacher_id, learn_year
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from paper
+    where paper_id = #{paperId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from paper
+    where paper_id = #{paperId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.Paper">
+    <selectKey keyProperty="paperId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into paper (paper_name, teacher_id, learn_year
+      )
+    values (#{paperName,jdbcType=VARCHAR}, #{teacherId,jdbcType=INTEGER}, #{learnYear,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.Paper">
+    <selectKey keyProperty="paperId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="paperName != null">
+        paper_name,
+      </if>
+      <if test="teacherId != null">
+        teacher_id,
+      </if>
+      <if test="learnYear != null">
+        learn_year,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="paperName != null">
+        #{paperName,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherId != null">
+        #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="learnYear != null">
+        #{learnYear,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.Paper">
+    update paper
+    <set>
+      <if test="paperName != null">
+        paper_name = #{paperName,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherId != null">
+        teacher_id = #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="learnYear != null">
+        learn_year = #{learnYear,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where paper_id = #{paperId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.Paper">
+    update paper
+    set paper_name = #{paperName,jdbcType=VARCHAR},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      learn_year = #{learnYear,jdbcType=VARCHAR}
+    where paper_id = #{paperId,jdbcType=INTEGER}
+  </update>
+  <select id="getStudentPaper" resultMap="cafuc.flyeat.zy.mapper.StudentPaperMapper.BaseResultMap">
+    select student_paper_id,student_id,paper_id,accept,kaiti_id,kaiti_advice,renwu_id,renwu_oppion,lunwen_id,lunwen_back,lunwen_oppion,lunwen_addvice,pingshen_id,pingshen_oppion,boos_oppion,compelete from student_paper where paper_id=#{paperId}
+  </select>
+  <select id="getTeacher" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.BaseResultMap">
+    select teacher_id,teacher_name,nation,arrival_date,birthday,cpc,edu_bg,reward,college_id,staff_id,teacher_type from teacher where teacher_id=#{teacherId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].paperId!=null">
+        paper_id,
+      </if>
+      <if test="list[0].paperName!=null">
+        paper_name,
+      </if>
+      <if test="list[0].teacherId!=null">
+        teacher_id,
+      </if>
+      <if test="list[0].learnYear!=null">
+        learn_year,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.paperId!=null">
+          #{item.paperId,jdbcType=INTEGER},
+        </if>
+        <if test="item.paperName!=null">
+          #{item.paperName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.teacherId!=null">
+          #{item.teacherId,jdbcType=INTEGER},
+        </if>
+        <if test="item.learnYear!=null">
+          #{item.learnYear,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update paper
+      <set>
+        <if test="item.paperName!=null">
+          paper_name=#{item.paperName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.teacherId!=null">
+          teacher_id=#{item.teacherId,jdbcType=INTEGER},
+        </if>
+        <if test="item.learnYear!=null">
+          learn_year=#{item.learnYear,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where 
+      paper_id = #{item.paperId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

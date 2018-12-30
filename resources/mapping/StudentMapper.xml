@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.StudentMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.Student">
+    <id column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="student_name" jdbcType="VARCHAR" property="studentName" />
+    <result column="student_number" jdbcType="VARCHAR" property="studentNumber" />
+    <result column="pob" jdbcType="VARCHAR" property="pob" />
+    <result column="nation" jdbcType="VARCHAR" property="nation" />
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="male" jdbcType="INTEGER" property="male" />
+    <result column="cpc" jdbcType="VARCHAR" property="cpc" />
+    <result column="punishment" jdbcType="VARCHAR" property="punishment" />
+    <result column="dormitory" jdbcType="VARCHAR" property="dormitory" />
+    <result column="college_id" jdbcType="INTEGER" property="collegeId" />
+    <result column="major_id" jdbcType="INTEGER" property="majorId" />
+    <result column="company_id" jdbcType="INTEGER" property="companyId" />
+    <result column="reward" jdbcType="VARCHAR" property="reward" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="computer" jdbcType="VARCHAR" property="computer" />
+    <result column="skill" jdbcType="VARCHAR" property="skill" />
+    <result column="sfz_number" jdbcType="VARCHAR" property="sfzNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="school_roll" jdbcType="VARCHAR" property="schoolRoll" />
+    <result column="is_change_major" jdbcType="BIT" property="isChangeMajor" />
+    <result column="is_unable_fly" jdbcType="BIT" property="isUnableFly" />
+    <result column="is_from_junior" jdbcType="BIT" property="isFromJunior" />
+    <result column="is_loan" jdbcType="BIT" property="isLoan" />
+    <result column="else_reward" jdbcType="VARCHAR" property="elseReward" />
+    <result column="secret" jdbcType="VARCHAR" property="secret" />
+    <result column="parent_phone1" jdbcType="VARCHAR" property="parentPhone1" />
+    <result column="parent_phone2" jdbcType="VARCHAR" property="parentPhone2" />
+    <association column="major_id" property="major" select="getMajor" />
+    <association column="college_id" property="college" select="getCollege" />
+    <association column="student_id" property="commonClass" select="getCommonClass" />
+    <association column="student_id" property="cet" select="getCet" />
+    <association column="company_id" property="company" select="getCompany" />
+    <association column="student_id" property="user" select="getUser" />
+    <association column="student_id" property="studentPaper" select="getStudentPaper" />
+    <collection column="student_id" property="studentClassLinks" select="getStudentClassLinks" />
+  </resultMap>
+  <resultMap id="LinkMap" type="cafuc.flyeat.zy.model.Student">
+    <id column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="student_name" jdbcType="VARCHAR" property="studentName" />
+    <result column="student_number" jdbcType="VARCHAR" property="studentNumber" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    student_id, student_name, student_number, pob, nation, birthday, male, cpc, punishment, dormitory,
+     reward, phone, status, computer, skill, sfz_number, email, school_roll, is_change_major, is_unable_fly,
+     is_from_junior, is_loan, else_reward, secret, parent_phone1, parent_phone2,
+      college_id, major_id, company_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from student
+    where student_id = #{studentId}
+  </select>
+  <select id="selectByStuNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from student
+    where student_number = #{number}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from student
+  </select>
+  <select id="selectByCourseId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select s.student_id, s.student_name, s.student_number, s.pob, s.nation, s.birthday, s.male, s.cpc, s.punishment,
+      s.dormitory, s.college_id, s.major_id, s.company_id, s.reward, s.phone, s.status, s.computer, s.skill,
+      s.sfz_number, s.email, s.school_roll, s.is_change_major, s.is_unable_fly, s.is_from_junior, s.is_loan, s.else_reward,
+      s.secret, s.parent_phone1, s.parent_phone2
+    from student s, student_class sc, class_course cs
+    where sc.student_id = s.student_id and sc.class_id = cs.class_id and cs.course_id = #{id}
+  </select>
+  <select id="selectByClassId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select s.student_id, s.student_name, s.student_number, s.pob, s.nation, s.birthday, s.male, s.cpc, s.punishment,
+      s.dormitory, s.college_id, s.major_id, s.company_id, s.reward, s.phone, s.status, s.computer, s.skill,
+      s.sfz_number, s.email, s.school_roll, s.is_change_major, s.is_unable_fly, s.is_from_junior, s.is_loan, s.else_reward,
+      s.secret, s.parent_phone1, s.parent_phone2
+    from student s, student_class sc
+    where sc.student_id = s.student_id and sc.class_id = #{classId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from student
+    where student_id = #{studentId}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.Student">
+    <selectKey keyProperty="studentId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student (student_name, student_number, pob, nation,
+      birthday, male, cpc, punishment, 
+      dormitory, college_id, major_id, 
+      company_id, reward, phone, status, computer, skill, sfz_number, email, school_roll, is_change_major, is_unable_fly,
+    is_from_junior, is_loan, else_reward, secret, parent_phone1, parent_phone2)
+    values (#{studentName}, #{studentNumber}, #{pob}, #{nation},
+      #{birthday}, #{male}, #{cpc}, #{punishment}, 
+      #{dormitory}, #{collegeId}, #{majorId}, 
+      #{companyId}, #{reward}, #{phone}, #{status}, #{computer}, #{skill}, #{sfzNumber}, #{email}, #{schoolRoll}, #{isChangeMajor},
+      #{isUnableFly}, #{isFromJunior}, #{isLoan}, #{elseReward}, #{secret}, #{parentPhone1}, #{parentPhone2})
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.Student">
+    <selectKey keyProperty="studentId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="studentName != null">
+        student_name,
+      </if>
+      <if test="studentNumber != null">
+        student_number,
+      </if>
+      <if test="pob != null">
+        pob,
+      </if>
+      <if test="nation != null">
+        nation,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="male != null">
+        male,
+      </if>
+      <if test="cpc != null">
+        cpc,
+      </if>
+      <if test="punishment != null">
+        punishment,
+      </if>
+      <if test="dormitory != null">
+        dormitory,
+      </if>
+      <if test="collegeId != null">
+        college_id,
+      </if>
+      <if test="majorId != null">
+        major_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="reward != null">
+        reward,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="computer != null">
+        computer,
+      </if>
+      <if test="skill != null">
+        skill,
+      </if>
+      <if test="sfzNumber != null">
+        sfz_number,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="schoolRoll != null">
+        school_roll,
+      </if>
+      <if test="isChangeMajor != null">
+        is_change_major,
+      </if>
+      <if test="isUnableFly != null">
+        is_unable_fly,
+      </if>
+      <if test="is_from_junior != null">
+        isFromJunior,
+      </if>
+      <if test="isLoan != null">
+        is_loan,
+      </if>
+      <if test="elseReward != null">
+        else_reward,
+      </if>
+      <if test="secret != null">
+        secret,
+      </if>
+      <if test="parentPhone1 != null">
+        parent_phone1,
+      </if>
+      <if test="parentPhone2 != null">
+        parent_phone2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="studentName != null">
+        #{studentName},
+      </if>
+      <if test="studentNumber != null">
+        #{studentNumber},
+      </if>
+      <if test="pob != null">
+        #{pob},
+      </if>
+      <if test="nation != null">
+        #{nation},
+      </if>
+      <if test="birthday != null">
+        #{birthday},
+      </if>
+      <if test="male != null">
+        #{male},
+      </if>
+      <if test="cpc != null">
+        #{cpc},
+      </if>
+      <if test="punishment != null">
+        #{punishment},
+      </if>
+      <if test="dormitory != null">
+        #{dormitory},
+      </if>
+      <if test="collegeId != null">
+        #{collegeId},
+      </if>
+      <if test="majorId != null">
+        #{majorId},
+      </if>
+      <if test="companyId != null">
+        #{companyId},
+      </if>
+      <if test="reward != null">
+        #{reward},
+      </if>
+      <if test="phone != null">
+        #{phone},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="computer != null">
+        #{computer},
+      </if>
+      <if test="skill != null">
+        #{skill},
+      </if>
+      <if test="sfzNumber != null">
+        #{sfzNumber},
+      </if>
+      <if test="email != null">
+        #{email},
+      </if>
+      <if test="schoolRoll != null">
+        #{schoolRoll},
+      </if>
+      <if test="isChangeMajor != null">
+        #{isChangeMajor},
+      </if>
+      <if test="isUnableFly != null">
+        #{isUnableFly},
+      </if>
+      <if test="is_from_junior != null">
+        #{isFromJunior},
+      </if>
+      <if test="isLoan != null">
+        #{isLoan},
+      </if>
+      <if test="elseReward != null">
+        #{elseReward},
+      </if>
+      <if test="secret != null">
+        #{secret},
+      </if>
+      <if test="parentPhone1 != null">
+        #{parentPhone1},
+      </if>
+      <if test="parentPhone2 != null">
+        #{parentPhone2},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.Student">
+    update student
+    <set>
+      <if test="studentName != null">
+        student_name = #{studentName},
+      </if>
+      <if test="studentNumber != null">
+        student_number = #{studentNumber},
+      </if>
+      <if test="pob != null">
+        nation = #{pob},
+      </if>
+      <if test="nation != null">
+        nation = #{nation},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday},
+      </if>
+      <if test="male != null">
+        male = #{male},
+      </if>
+      <if test="cpc != null">
+        cpc = #{cpc},
+      </if>
+      <if test="punishment != null">
+        punishment = #{punishment},
+      </if>
+      <if test="dormitory != null">
+        dormitory = #{dormitory},
+      </if>
+      <if test="collegeId != null">
+        college_id = #{collegeId},
+      </if>
+      <if test="majorId != null">
+        major_id = #{majorId},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId},
+      </if>
+      <if test="reward != null">
+        reward = #{reward},
+      </if>
+      <if test="phone != null">
+        phone = #{phone},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="computer != null">
+        computer = #{computer},
+      </if>
+      <if test="skill != null">
+        skill = #{skill},
+      </if>
+      <if test="sfzNumber != null">
+        sfz_number = #{sfzNumber},
+      </if>
+      <if test="email != null">
+        email = #{email},
+      </if>
+      <if test="schoolRoll != null">
+        school = #{schoolRoll},
+      </if>
+      <if test="isChangeMajor != null">
+        is_change_major = #{isChangeMajor},
+      </if>
+      <if test="isUnableFly != null">
+        is_unable_fly = #{isUnableFly},
+      </if>
+      <if test="is_from_junior != null">
+        is_from_junior = #{isFromJunior},
+      </if>
+      <if test="isLoan != null">
+        is_loan = #{isLoan},
+      </if>
+      <if test="elseReward != null">
+        else_reward = #{elseReward},
+      </if>
+      <if test="secret != null">
+        secret = #{secret},
+      </if>
+      <if test="parentPhone1 != null">
+        parent_phone1 = #{parentPhone1},
+      </if>
+      <if test="parentPhone2 != null">
+        parent_phone2 = #{parentPhone2},
+      </if>
+    </set>
+    where student_id = #{studentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.Student">
+    update student
+    set student_name = #{studentName},
+      student_number = #{studentNumber},
+      pob = #{pob},
+      nation = #{nation},
+      birthday = #{birthday},
+      male = #{male},
+      cpc = #{cpc},
+      punishment = #{punishment},
+      dormitory = #{dormitory},
+      college_id = #{collegeId},
+      major_id = #{majorId},
+      company_id = #{companyId},
+      reward = #{reward},
+      phone = #{phone},
+      status = #{status},
+      computer = #{computer},
+      skill = #{skill},
+      sfz_number = #{sfzNumber},
+      email = #{email},
+      school = #{schoolRoll},
+      is_change_major = #{isChangeMajor},
+      is_unable_fly = #{isUnableFly},
+      is_from_junior = #{isFromJunior},
+      is_loan = #{isLoan},
+      else_reward = #{elseReward},
+      secret = #{secret},
+      parent_phone1 = #{parentPhone1},
+      parent_phone2 = #{parentPhone2},
+    where student_id = #{studentId}
+  </update>
+  <select id="getMajor" resultMap="cafuc.flyeat.zy.mapper.MajorMapper.BaseResultMap">
+    select major_id,major_name,college_id from major where major_id=#{majorId}
+  </select>
+  <select id="getCollege" resultMap="cafuc.flyeat.zy.mapper.CollegeMapper.BaseResultMap">
+    select college_id,college_name from college where college_id=#{collegeId}
+  </select>
+  <select id="getCommonClass" resultMap="cafuc.flyeat.zy.mapper.StuClassMapper.LinkMap">
+    SELECT
+        stu_class.class_id, stu_class.class_name, stu_class.class_year
+    FROM
+        student,
+        student_class,
+        stu_class
+    WHERE
+        student.student_id = student_class.student_id
+        AND stu_class.class_id = student_class.class_id
+        AND stu_class.zy_class = 0
+        AND student.student_id = #{studentId}
+  </select>
+  <select id="getCet" resultMap="cafuc.flyeat.zy.mapper.CetMapper.BaseResultMap">
+    select id,cet_name,score,student_id from cet where student_id=#{studentId}
+  </select>
+  <select id="getUser" resultMap="cafuc.flyeat.zy.mapper.UserMapper.BaseResultMap">
+    select user_id,login_account,login_password,user_type,student_id,teacher_id from user where student_id=#{studentId}
+  </select>
+  <select id="getCompany" resultMap="cafuc.flyeat.zy.mapper.CompanyMapper.BaseResultMap">
+    select company_id, company_name, company_introduction from company where company_id=#{companyId}
+  </select>
+  <select id="getStudentPaper" resultMap="cafuc.flyeat.zy.mapper.StudentPaperMapper.BaseResultMap">
+    select student_paper_id,student_id,paper_id,accept,kaiti_id,kaiti_advice,renwu_id,renwu_oppion,lunwen_id,lunwen_back,lunwen_oppion,lunwen_addvice,pingshen_id,pingshen_oppion,boos_oppion,compelete from student_paper where student_id=#{studentId}
+  </select>
+  <select id="getStudentClassLinks" resultMap="cafuc.flyeat.zy.mapper.StudentClassLinkMapper.BaseResultMap">
+    select id,class_id,student_id from student_class where student_id=#{studentId} 
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].studentId!=null">
+        student_id,
+      </if>
+      <if test="list[0].studentName!=null">
+        student_name,
+      </if>
+      <if test="list[0].studentNumber!=null">
+        student_number,
+      </if>
+      <if test="list[0].pob!=null">
+        pob,
+      </if>
+      <if test="list[0].nation!=null">
+        nation,
+      </if>
+      <if test="list[0].birthday!=null">
+        birthday,
+      </if>
+      <if test="list[0].male!=null">
+        male,
+      </if>
+      <if test="list[0].cpc!=null">
+        cpc,
+      </if>
+      <if test="list[0].punishment!=null">
+        punishment,
+      </if>
+      <if test="list[0].dormitory!=null">
+        dormitory,
+      </if>
+      <if test="list[0].collegeId!=null">
+        college_id,
+      </if>
+      <if test="list[0].majorId!=null">
+        major_id,
+      </if>
+      <if test="list[0].companyId!=null">
+        company_id,
+      </if>
+      <if test="list[0].reward!=null">
+        reward,
+      </if>
+      <if test="list[0].phone!=null">
+        phone,
+      </if>
+      <if test="list[0].status!=null">
+        status,
+      </if>
+      <if test="list[0].computer!=null">
+        computer,
+      </if>
+      <if test="list[0].skill!=null">
+        skill,
+      </if>
+      <if test="list[0].sfzNumber != null">
+        sfz_number,
+      </if>
+      <if test="list[0].email != null">
+        email,
+      </if>
+      <if test="list[0].schoolRoll != null">
+        school,
+      </if>
+      <if test="list[0].isChangeMajor != null">
+        is_change_major,
+      </if>
+      <if test="list[0].isUnableFly != null">
+        is_unable_fly,
+      </if>
+      <if test="list[0].is_from_junior != null">
+        is_from_junior,
+      </if>
+      <if test="list[0].isLoan != null">
+        is_loan,
+      </if>
+      <if test="list[0].elseReward != null">
+        else_reward,
+      </if>
+      <if test="list[0].secret != null">
+        secret,
+      </if>
+      <if test="list[0].parentPhone1 != null">
+        parent_phone1,
+      </if>
+      <if test="list[0].parentPhone2 != null">
+        parent_phone2
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.studentId!=null">
+          #{item.studentId},
+        </if>
+        <if test="item.studentName!=null">
+          #{item.studentName},
+        </if>
+        <if test="item.studentNumber!=null">
+          #{item.studentNumber},
+        </if>
+        <if test="item.pob!=null">
+          #{item.pob},
+        </if>
+        <if test="item.nation!=null">
+          #{item.nation},
+        </if>
+        <if test="item.birthday!=null">
+          #{item.birthday},
+        </if>
+        <if test="item.male!=null">
+          #{item.male},
+        </if>
+        <if test="item.cpc!=null">
+          #{item.cpc},
+        </if>
+        <if test="item.punishment!=null">
+          #{item.punishment},
+        </if>
+        <if test="item.dormitory!=null">
+          #{item.dormitory},
+        </if>
+        <if test="item.collegeId!=null">
+          #{item.collegeId},
+        </if>
+        <if test="item.majorId!=null">
+          #{item.majorId},
+        </if>
+        <if test="item.companyId!=null">
+          #{item.companyId},
+        </if>
+        <if test="item.reward!=null">
+          #{item.reward},
+        </if>
+        <if test="item.phone!=null">
+          #{item.phone},
+        </if>
+        <if test="item.status!=null">
+          #{item.status},
+        </if>
+        <if test="item.computer!=null">
+          #{item.computer},
+        </if>
+        <if test="item.skill!=null">
+          #{item.skill},
+        </if>
+        <if test="item.sfzNumber != null">
+          #{item.sfzNumber},
+        </if>
+        <if test="item.email != null">
+          #{item.email},
+        </if>
+        <if test="item.schoolRoll != null">
+          #{item.schoolRoll},
+        </if>
+        <if test="item.isChangeMajor != null">
+          #{item.isChangeMajor},
+        </if>
+        <if test="item.isUnableFly != null">
+          #{item.isUnableFly},
+        </if>
+        <if test="item.is_from_junior != null">
+          #{item.isFromJunior},
+        </if>
+        <if test="item.isLoan != null">
+          #{item.isLoan},
+        </if>
+        <if test="item.elseReward != null">
+          #{item.elseReward},
+        </if>
+        <if test="item.secret != null">
+          #{item.secret},
+        </if>
+        <if test="item.parentPhone1 != null">
+          #{item.parentPhone1},
+        </if>
+        <if test="item.parentPhone2 != null">
+          #{item.parentPhone2},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update student
+      <set>
+        <if test="item.studentName!=null">
+          student_name=#{item.studentName},
+        </if>
+        <if test="item.studentNumber!=null">
+          student_number=#{item.studentNumber},
+        </if>
+        <if test="item.pob!=null">
+          pob=#{item.pob},
+        </if>
+        <if test="item.nation!=null">
+          nation=#{item.nation},
+        </if>
+        <if test="item.birthday!=null">
+          birthday=#{item.birthday},
+        </if>
+        <if test="item.male!=null">
+          male=#{item.male},
+        </if>
+        <if test="item.cpc!=null">
+          cpc=#{item.cpc},
+        </if>
+        <if test="item.punishment!=null">
+          punishment=#{item.punishment},
+        </if>
+        <if test="item.dormitory!=null">
+          dormitory=#{item.dormitory},
+        </if>
+        <if test="item.collegeId!=null">
+          college_id=#{item.collegeId},
+        </if>
+        <if test="item.majorId!=null">
+          major_id=#{item.majorId},
+        </if>
+        <if test="item.companyId!=null">
+          company_id=#{item.companyId},
+        </if>
+        <if test="item.reward!=null">
+          reward=#{item.reward},
+        </if>
+        <if test="item.phone!=null">
+          phone=#{item.phone},
+        </if>
+        <if test="item.status!=null">
+          status=#{item.status},
+        </if>
+        <if test="item.computer!=null">
+          computer=#{item.computer},
+        </if>
+        <if test="item.skill!=null">
+          skill=#{item.skill},
+        </if>
+        <if test="item.sfzNumber != null">
+          sfz_number = #{item.sfzNumber},
+        </if>
+        <if test="item.email != null">
+          email = #{item.email},
+        </if>
+        <if test="item.schoolRoll != null">
+          school = #{item.schoolRoll},
+        </if>
+        <if test="item.isChangeMajor != null">
+          is_change_major = #{item.isChangeMajor},
+        </if>
+        <if test="item.isUnableFly != null">
+          is_unable_fly = #{item.isUnableFly},
+        </if>
+        <if test="item.is_from_junior != null">
+          is_from_junior = #{item.isFromJunior},
+        </if>
+        <if test="item.isLoan != null">
+          is_loan = #{item.isLoan},
+        </if>
+        <if test="item.elseReward != null">
+          else_reward = #{item.elseReward},
+        </if>
+        <if test="item.secret != null">
+          secret = #{item.secret},
+        </if>
+        <if test="item.parentPhone1 != null">
+          parent_phone1 = #{item.parentPhone1},
+        </if>
+        <if test="item.parentPhone2 != null">
+          parent_phone2 = #{item.parentPhone2},
+        </if>
+      </set>
+      where 
+      student_id = #{item.studentId}
+    </foreach>
+  </update>
+</mapper>

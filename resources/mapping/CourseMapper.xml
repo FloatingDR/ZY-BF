@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.CourseMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.Course">
+    <id column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="zy_course" jdbcType="BIT" property="zyCourse" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <association column="parent_id" property="course" select="getCourse" />
+    <collection column="course_id" property="classes" select="getClasses" />
+    <collection property="childCourses" column="course_id" select="getChilds" />
+    <collection property="teachers" column="course_id" select="getTeachers" />
+  </resultMap>
+  <resultMap id="LinkMap" type="cafuc.flyeat.zy.model.Course">
+    <id column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="zy_course" jdbcType="BIT" property="zyCourse" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <collection property="teachers" column="course_id" select="getTeachers" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id, course_name, zy_course, parent_id, weight
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from course
+  </select>
+  <select id="selectCourseByClass" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+      c.course_id, c.course_name, c.zy_course, c.parent_id, c.weight
+    from course c, class_course cc
+    where cc.course_id = c.course_id
+      and c.zy_course = 0
+      and cc.class_id = #{classid}
+  </select>
+  <select id="selectChildCourses" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+      c.course_id, c.course_name, c.zy_course, c.parent_id, c.weight
+    from course c
+    where c.parent_id = #{id}
+  </select>
+  <select id="searchCourse" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <bind name="name" value="'%' + _parameter + '%'"/>
+    select
+    <include refid="Base_Column_List" />
+    from course
+    where  zy_course = 0
+      and course_name like #{name}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.Course">
+    <selectKey keyProperty="courseId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course (course_name,  zy_course, parent_id, weight   )
+    values (#{courseName,jdbcType=VARCHAR},
+      #{zyCourse,jdbcType=BIT}, #{parentId,jdbcType=INTEGER}, #{weight,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.Course">
+    <selectKey keyProperty="courseId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="courseName != null">
+        course_name,
+      </if>
+      <if test="zyCourse != null">
+        zy_course,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="courseName != null">
+        #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="zyCourse != null">
+        #{zyCourse,jdbcType=BIT},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.Course">
+    update course
+    <set>
+      <if test="courseName != null">
+        course_name = #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="zyCourse != null">
+        zy_course = #{zyCourse,jdbcType=BIT},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+    </set>
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.Course">
+    update course
+    set course_name = #{courseName,jdbcType=VARCHAR},
+      zy_course = #{zyCourse,jdbcType=BIT},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=INTEGER}
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+  <select id="getCourse" resultMap="cafuc.flyeat.zy.mapper.CourseMapper.BaseResultMap">
+    select course_id,course_name,zy_course,parent_id,weight from course where course_id=#{parentId}
+  </select>
+  <select id="getChilds" resultMap="cafuc.flyeat.zy.mapper.CourseMapper.LinkMap">
+    select course_id,course_name,zy_course,parent_id,weight from course where parent_id=#{courseId}
+  </select>
+  <select id="getClasses" resultMap="cafuc.flyeat.zy.mapper.StuClassMapper.LinkMap">
+    select sc.class_id, sc.class_year, sc.class_name, sc.zy_class, sc.college_id, sc.major_id, sc.daoyuan_id, sc.banzhuren_id
+    from stu_class sc, class_course cc
+    where cc.course_id = #{courseId}
+      and cc.class_id = sc.class_id
+  </select>
+  <select id="getTeachers" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.LinkMap">
+    select  t.teacher_id, t.teacher_name, t.nation, t.arrival_date, t.birthday, t.cpc, t.edu_bg, t.reward, t.college_id,
+      t.staff_id, t.teacher_type, t.sfz_number, t.graduate_school, t.graduate_major, t.title, t.phone, t.email,
+      t.projects, t.company
+    from teacher t, teacher_course tc
+    where tc.course_id = #{courseId}
+      and tc.teacher_id = t.teacher_id
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].courseId!=null">
+        course_id,
+      </if>
+      <if test="list[0].courseName!=null">
+        course_name,
+      </if>
+      <if test="list[0].zyCourse!=null">
+        zy_course,
+      </if>
+      <if test="list[0].parentId!=null">
+        parent_id,
+      </if>
+      <if test="list[0].weight!=null">
+        weight,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.courseId!=null">
+          #{item.courseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.courseName!=null">
+          #{item.courseName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.zyCourse!=null">
+          #{item.zyCourse,jdbcType=BIT},
+        </if>
+        <if test="item.parentId!=null">
+          #{item.parentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.weight!=null">
+          #{item.weight,jdbcType=INTEGER},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update course
+      <set>
+        <if test="item.courseName!=null">
+          course_name=#{item.courseName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.zyCourse!=null">
+          zy_course=#{item.zyCourse,jdbcType=BIT},
+        </if>
+        <if test="item.parentId!=null">
+          parent_id=#{item.parentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.weight!=null">
+          weight=#{item.weight,jdbcType=INTEGER},
+        </if>
+      </set>
+      where 
+      course_id = #{item.courseId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

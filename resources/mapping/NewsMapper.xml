@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.NewsMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.News">
+    <id column="news_id" jdbcType="INTEGER" property="newsId" />
+    <result column="news_type" jdbcType="BIT" property="newsType" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="top" jdbcType="BIT" property="top" />
+    <association column="user_id" property="user" select="getUser" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cafuc.flyeat.zy.model.News">
+    <result column="news_content" jdbcType="LONGVARCHAR" property="newsContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    news_id, news_type, news_title, create_time, user_id, top
+  </sql>
+  <sql id="Blob_Column_List">
+    news_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from news
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from news
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.News">
+    <selectKey keyProperty="newsId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into news (news_type, news_title, create_time, 
+      user_id, top, news_content
+      )
+    values (#{newsType,jdbcType=BIT}, #{newsTitle,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
+      #{userId,jdbcType=INTEGER}, #{top,jdbcType=BIT}, #{newsContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.News">
+    <selectKey keyProperty="newsId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into news
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="newsType != null">
+        news_type,
+      </if>
+      <if test="newsTitle != null">
+        news_title,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="top != null">
+        top,
+      </if>
+      <if test="newsContent != null">
+        news_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="newsType != null">
+        #{newsType,jdbcType=BIT},
+      </if>
+      <if test="newsTitle != null">
+        #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="top != null">
+        #{top,jdbcType=BIT},
+      </if>
+      <if test="newsContent != null">
+        #{newsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.News">
+    update news
+    <set>
+      <if test="newsType != null">
+        news_type = #{newsType,jdbcType=BIT},
+      </if>
+      <if test="newsTitle != null">
+        news_title = #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="top != null">
+        top = #{top,jdbcType=BIT},
+      </if>
+      <if test="newsContent != null">
+        news_content = #{newsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cafuc.flyeat.zy.model.News">
+    update news
+    set news_type = #{newsType,jdbcType=BIT},
+      news_title = #{newsTitle,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      user_id = #{userId,jdbcType=INTEGER},
+      top = #{top,jdbcType=BIT},
+      news_content = #{newsContent,jdbcType=LONGVARCHAR}
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.News">
+    update news
+    set news_type = #{newsType,jdbcType=BIT},
+      news_title = #{newsTitle,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      user_id = #{userId,jdbcType=INTEGER},
+      top = #{top,jdbcType=BIT}
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <select id="getUser" resultMap="cafuc.flyeat.zy.mapper.UserMapper.BaseResultMap">
+    select user_id,login_account,login_password,user_type,student_id,teacher_id from user where user_id=#{userId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into news
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].newsId!=null">
+        news_id,
+      </if>
+      <if test="list[0].newsType!=null">
+        news_type,
+      </if>
+      <if test="list[0].newsTitle!=null">
+        news_title,
+      </if>
+      <if test="list[0].createTime!=null">
+        create_time,
+      </if>
+      <if test="list[0].userId!=null">
+        user_id,
+      </if>
+      <if test="list[0].top!=null">
+        top,
+      </if>
+      <if test="list[0].newsContent!=null">
+        news_content,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.newsId!=null">
+          #{item.newsId,jdbcType=INTEGER},
+        </if>
+        <if test="item.newsType!=null">
+          #{item.newsType,jdbcType=BIT},
+        </if>
+        <if test="item.newsTitle!=null">
+          #{item.newsTitle,jdbcType=VARCHAR},
+        </if>
+        <if test="item.createTime!=null">
+          #{item.createTime,jdbcType=DATE},
+        </if>
+        <if test="item.userId!=null">
+          #{item.userId,jdbcType=INTEGER},
+        </if>
+        <if test="item.top!=null">
+          #{item.top,jdbcType=BIT},
+        </if>
+        <if test="item.newsContent!=null">
+          #{item.newsContent,jdbcType=LONGVARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update news
+      <set>
+        <if test="item.newsType!=null">
+          news_type=#{item.newsType,jdbcType=BIT},
+        </if>
+        <if test="item.newsTitle!=null">
+          news_title=#{item.newsTitle,jdbcType=VARCHAR},
+        </if>
+        <if test="item.createTime!=null">
+          create_time=#{item.createTime,jdbcType=DATE},
+        </if>
+        <if test="item.userId!=null">
+          user_id=#{item.userId,jdbcType=INTEGER},
+        </if>
+        <if test="item.top!=null">
+          top=#{item.top,jdbcType=BIT},
+        </if>
+        <if test="item.newsContent!=null">
+          news_content=#{item.newsContent,jdbcType=LONGVARCHAR},
+        </if>
+      </set>
+      where 
+      news_id = #{item.newsId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

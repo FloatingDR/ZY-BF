@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.FileMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.File">
+    <id column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="addr" jdbcType="VARCHAR" property="addr" />
+    <association column="user_id" property="user" select="getUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_id, user_id, file_name, upload_time, addr
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.File">
+    <selectKey keyProperty="fileId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file (user_id, file_name, upload_time, 
+      addr)
+    values (#{userId,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, 
+      #{addr,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.File">
+    <selectKey keyProperty="fileId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+      <if test="addr != null">
+        addr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addr != null">
+        #{addr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.File">
+    update file
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addr != null">
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.File">
+    update file
+    set user_id = #{userId,jdbcType=INTEGER},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      addr = #{addr,jdbcType=VARCHAR}
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <select id="getUser" resultMap="cafuc.flyeat.zy.mapper.UserMapper.BaseResultMap">
+    select user_id,login_account,login_password,user_type,student_id,teacher_id from user where user_id=#{userId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].fileId!=null">
+        file_id,
+      </if>
+      <if test="list[0].userId!=null">
+        user_id,
+      </if>
+      <if test="list[0].fileName!=null">
+        file_name,
+      </if>
+      <if test="list[0].uploadTime!=null">
+        upload_time,
+      </if>
+      <if test="list[0].addr!=null">
+        addr,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.fileId!=null">
+          #{item.fileId,jdbcType=INTEGER},
+        </if>
+        <if test="item.userId!=null">
+          #{item.userId,jdbcType=INTEGER},
+        </if>
+        <if test="item.fileName!=null">
+          #{item.fileName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.uploadTime!=null">
+          #{item.uploadTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="item.addr!=null">
+          #{item.addr,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update file
+      <set>
+        <if test="item.userId!=null">
+          user_id=#{item.userId,jdbcType=INTEGER},
+        </if>
+        <if test="item.fileName!=null">
+          file_name=#{item.fileName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.uploadTime!=null">
+          upload_time=#{item.uploadTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="item.addr!=null">
+          addr=#{item.addr,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where 
+      file_id = #{item.fileId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

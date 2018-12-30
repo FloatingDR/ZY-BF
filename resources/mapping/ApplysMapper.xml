@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.ApplysMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.Applys">
+    <id column="apply_id" jdbcType="INTEGER" property="applyId" />
+    <result column="apply_name" jdbcType="VARCHAR" property="applyName" />
+    <result column="apply_type" jdbcType="BIT" property="applyType" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="class_course_id" jdbcType="INTEGER" property="classCourseId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <association column="student_id" property="student" select="getStudent" />
+    <association column="teacher_id" property="teacher" select="getTeacher" />
+    <association column="class_course_id" property="classCourseLink" select="getClassCourseLink" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cafuc.flyeat.zy.model.Applys">
+    <result column="apply_content" jdbcType="LONGVARCHAR" property="applyContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    apply_id, apply_name, apply_type, create_time, student_id, teacher_id, class_course_id, 
+    status
+  </sql>
+  <sql id="Blob_Column_List">
+    apply_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from applys
+    where apply_id = #{applyId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from applys
+    where apply_id = #{applyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.Applys">
+    <selectKey keyProperty="applyId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into applys (apply_name, apply_type, create_time, 
+      student_id, teacher_id, class_course_id, 
+      status, apply_content)
+    values (#{applyName,jdbcType=VARCHAR}, #{applyType,jdbcType=BIT}, #{createTime,jdbcType=DATE}, 
+      #{studentId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER}, #{classCourseId,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{applyContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.Applys">
+    <selectKey keyProperty="applyId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into applys
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applyName != null">
+        apply_name,
+      </if>
+      <if test="applyType != null">
+        apply_type,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="studentId != null">
+        student_id,
+      </if>
+      <if test="teacherId != null">
+        teacher_id,
+      </if>
+      <if test="classCourseId != null">
+        class_course_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="applyContent != null">
+        apply_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applyName != null">
+        #{applyName,jdbcType=VARCHAR},
+      </if>
+      <if test="applyType != null">
+        #{applyType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="studentId != null">
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="teacherId != null">
+        #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="classCourseId != null">
+        #{classCourseId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="applyContent != null">
+        #{applyContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.Applys">
+    update applys
+    <set>
+      <if test="applyName != null">
+        apply_name = #{applyName,jdbcType=VARCHAR},
+      </if>
+      <if test="applyType != null">
+        apply_type = #{applyType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="studentId != null">
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="teacherId != null">
+        teacher_id = #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="classCourseId != null">
+        class_course_id = #{classCourseId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="applyContent != null">
+        apply_content = #{applyContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where apply_id = #{applyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cafuc.flyeat.zy.model.Applys">
+    update applys
+    set apply_name = #{applyName,jdbcType=VARCHAR},
+      apply_type = #{applyType,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=DATE},
+      student_id = #{studentId,jdbcType=INTEGER},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      class_course_id = #{classCourseId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      apply_content = #{applyContent,jdbcType=LONGVARCHAR}
+    where apply_id = #{applyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.Applys">
+    update applys
+    set apply_name = #{applyName,jdbcType=VARCHAR},
+      apply_type = #{applyType,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=DATE},
+      student_id = #{studentId,jdbcType=INTEGER},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      class_course_id = #{classCourseId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT}
+    where apply_id = #{applyId,jdbcType=INTEGER}
+  </update>
+  <select id="getStudent" resultMap="cafuc.flyeat.zy.mapper.StudentMapper.BaseResultMap">
+    select student_id,student_name,student_number,nation,birthday,male,cpc,punishment,dormitory,college_id,major_id,company_id from student where student_id=#{studentId}
+  </select>
+  <select id="getTeacher" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.BaseResultMap">
+    select teacher_id,teacher_name,nation,arrival_date,birthday,cpc,edu_bg,reward,college_id,staff_id,teacher_type from teacher where teacher_id=#{teacherId}
+  </select>
+  <select id="getClassCourseLink" resultMap="cafuc.flyeat.zy.mapper.ClassCourseLinkMapper.BaseResultMap">
+    select class_course_id,course_id,class_id,teacher_id,test_date,begin_end_week,learn_year from class_course where class_course_id=#{classCourseId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into applys
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].applyId!=null">
+        apply_id,
+      </if>
+      <if test="list[0].applyName!=null">
+        apply_name,
+      </if>
+      <if test="list[0].applyType!=null">
+        apply_type,
+      </if>
+      <if test="list[0].createTime!=null">
+        create_time,
+      </if>
+      <if test="list[0].studentId!=null">
+        student_id,
+      </if>
+      <if test="list[0].teacherId!=null">
+        teacher_id,
+      </if>
+      <if test="list[0].classCourseId!=null">
+        class_course_id,
+      </if>
+      <if test="list[0].status!=null">
+        status,
+      </if>
+      <if test="list[0].applyContent!=null">
+        apply_content,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.applyId!=null">
+          #{item.applyId,jdbcType=INTEGER},
+        </if>
+        <if test="item.applyName!=null">
+          #{item.applyName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.applyType!=null">
+          #{item.applyType,jdbcType=BIT},
+        </if>
+        <if test="item.createTime!=null">
+          #{item.createTime,jdbcType=DATE},
+        </if>
+        <if test="item.studentId!=null">
+          #{item.studentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.teacherId!=null">
+          #{item.teacherId,jdbcType=INTEGER},
+        </if>
+        <if test="item.classCourseId!=null">
+          #{item.classCourseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.status!=null">
+          #{item.status,jdbcType=TINYINT},
+        </if>
+        <if test="item.applyContent!=null">
+          #{item.applyContent,jdbcType=LONGVARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update applys
+      <set>
+        <if test="item.applyName!=null">
+          apply_name=#{item.applyName,jdbcType=VARCHAR},
+        </if>
+        <if test="item.applyType!=null">
+          apply_type=#{item.applyType,jdbcType=BIT},
+        </if>
+        <if test="item.createTime!=null">
+          create_time=#{item.createTime,jdbcType=DATE},
+        </if>
+        <if test="item.studentId!=null">
+          student_id=#{item.studentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.teacherId!=null">
+          teacher_id=#{item.teacherId,jdbcType=INTEGER},
+        </if>
+        <if test="item.classCourseId!=null">
+          class_course_id=#{item.classCourseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.status!=null">
+          status=#{item.status,jdbcType=TINYINT},
+        </if>
+        <if test="item.applyContent!=null">
+          apply_content=#{item.applyContent,jdbcType=LONGVARCHAR},
+        </if>
+      </set>
+      where 
+      apply_id = #{item.applyId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

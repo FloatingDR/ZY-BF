@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry location="E:\Download-lib\mysql-connector-java-8.0.12.jar"/>
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+
+        <plugin type="cc.bandaotixi.plugins.OneToOnePlugin"></plugin>
+        <plugin type="cc.bandaotixi.plugins.OneToManyPlugin"></plugin>
+        <plugin type="cc.bandaotixi.plugins.BatchInsertPlugin"></plugin>
+        <plugin type="cc.bandaotixi.plugins.BatchUpdatePlugin"></plugin>
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="true" />
+            <property name="suppressDate" value="true" />
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost/zy_prod?serverTimezone=UTC"
+                        userId="root"
+                        password="">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="cafuc.flyeat.zy.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapping"  targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cafuc.flyeat.zy.mapper"  targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!--
+        <table tableName="college" domainObjectName="College"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="college_id" sqlStatement="MySql" identity="true"/>
+            <oneToMany mappingTable="major" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="staff" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="student" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="stu_class" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="teacher" column="college_id" joinColumn="college_id"/>
+        </table>
+
+        <table tableName="major" domainObjectName="Major"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="major_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="college" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="stu_class" column="major_id" joinColumn="major_id"/>
+        </table>
+
+        <table tableName="staff" domainObjectName="Staff"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="staff_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="college" column="college_id" joinColumn="college_id"/>
+            <oneToMany mappingTable="teacher" column="staff_id" joinColumn="staff_id"/>
+        </table>
+        -->
+
+        <table tableName="teacher" domainObjectName="Teacher"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="teacher_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="user" column="teacher_id" joinColumn="teacher_id"/>
+            <oneToOne mappingTable="college" column="college_id" joinColumn="college_id"/>
+            <oneToOne mappingTable="staff" column="staff_id" joinColumn="staff_id"/>
+        </table>
+
+        <!--
+        <table tableName="stu_class" domainObjectName="StuClass"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="class_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="major" column="major_id" joinColumn="major_id"/>
+            <oneToOne mappingTable="college" column="college_id" joinColumn="college_id"/>
+            <oneToOne mappingTable="teacher" column="daoyuan_id" joinColumn="teacher_id"/>
+            <oneToOne mappingTable="teacher" column="banzhuren_id" joinColumn="teacher_id"/>
+            <oneToMany mappingTable="class_course" column="class_id" joinColumn="class_id"/>
+            <oneToMany mappingTable="student_class" column="class_id" joinColumn="class_id"/>
+        </table>
+
+        <table tableName="company" domainObjectName="Company"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="company_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="student" domainObjectName="Student"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="student_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="major" column="major_id" joinColumn="major_id"/>
+            <oneToOne mappingTable="college" column="college_id" joinColumn="college_id"/>
+            <oneToOne mappingTable="secret" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="cet" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="user" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="student_paper" column="student_id" joinColumn="student_id"/>
+            <oneToMany mappingTable="student_applys" column="student_id" joinColumn="student_id"/>
+            <oneToMany mappingTable="student_class" column="student_id" joinColumn="student_id"/>
+        </table>
+
+        <table tableName="student_class" domainObjectName="StudentClassLink"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="student_class_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="stu_class" column="class_id" joinColumn="class_id"/>
+        </table>
+
+        <table tableName="cet" domainObjectName="Cet"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+        </table>
+
+        <table tableName="zy_role" domainObjectName="Role"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="role_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="user" domainObjectName="User"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="user_id" sqlStatement="MySql" identity="true"/>
+            <oneToMany mappingTable="zy_user_role" column="user_id" joinColumn="user_id"/>
+            <oneToOne mappingTable="teacher" column="teacher_id" joinColumn="teacher_id"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+        </table>
+
+        <table tableName="zy_user_role" domainObjectName="UserRoleLink"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="zy_user" column="user_id" joinColumn="user_id"/>
+            <oneToOne mappingTable="zy_role" column="role_id" joinColumn="role_id"/>
+        </table>
+
+        <table tableName="news" domainObjectName="News"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="news_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="user" column="user_id" joinColumn="user_id"/>
+        </table>
+
+        <table tableName="course" domainObjectName="Course"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="course_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="course" column="parent_id" joinColumn="course_id"/>
+            <oneToMany mappingTable="class_course" column="course_id" joinColumn="course_id"/>
+        </table>
+
+        <table tableName="class_course" domainObjectName="ClassCourseLink"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="class_course_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="course" column="course_id" joinColumn="course_id"/>
+            <oneToOne mappingTable="stu_class" column="class_id" joinColumn="class_id"/>
+            <oneToOne mappingTable="teacher" column="teacher_id" joinColumn="teacher_id"/>
+        </table>
+
+        <table tableName="course_score" domainObjectName="CourseScoreLink"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="score_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="class_course" column="class_course_id" joinColumn="class_course_id"/>
+        </table>
+
+        <table tableName="class_course_time" domainObjectName="ClassCourseTime"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="class_course" column="class_course_id" joinColumn="class_course_id"/>
+        </table>
+
+        <table tableName="applys" domainObjectName="Applys"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="apply_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="teacher" column="teacher_id" joinColumn="teacher_id"/>
+            <oneToOne mappingTable="class_course" column="class_course_id" joinColumn="class_course_id"/>
+        </table>
+
+        <table tableName="file" domainObjectName="File"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="file_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="user" column="user_id" joinColumn="user_id"/>
+        </table>
+
+        <table tableName="paper" domainObjectName="Paper"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="paper_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student_paper" column="paper_id" joinColumn="paper_id"/>
+            <oneToOne mappingTable="teacher" column="teacher_id" joinColumn="teacher_id"/>
+        </table>
+
+        <table tableName="student_paper" domainObjectName="StudentPaper"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="student_paper_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="student" column="student_id" joinColumn="student_id"/>
+            <oneToOne mappingTable="paper" column="paper_id" joinColumn="paper_id"/>
+            <oneToOne mappingTable="file" column="kaiti_id" joinColumn="file_id"/>
+            <oneToOne mappingTable="file" column="renwu_id" joinColumn="file_id"/>
+            <oneToOne mappingTable="file" column="lunwen_id" joinColumn="file_id"/>
+            <oneToOne mappingTable="file" column="pingshen_id" joinColumn="file_id"/>
+        </table>
+
+        <table tableName="student_paper_guidance" domainObjectName="StudentPaperGuidance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="file" column="file_id" joinColumn="file_id"/>
+            <oneToOne mappingTable="student_paper" column="student_paper_id" joinColumn="student_paper_id"/>
+        </table>
+
+        <table tableName="teacher_class" domainObjectName="TeacherClassLink"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="teacher_class_id" sqlStatement="MySql" identity="true"/>
+            <oneToOne mappingTable="teacher" column="teacher_id" joinColumn="teacher_id"/>
+            <oneToOne mappingTable="stu_class" column="class_id" joinColumn="class_id"/>
+        </table>
+        -->
+    </context>
+</generatorConfiguration>

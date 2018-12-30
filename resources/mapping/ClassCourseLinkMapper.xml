@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.ClassCourseLinkMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.ClassCourseLink">
+    <id column="class_course_id" jdbcType="INTEGER" property="classCourseId" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="class_id" jdbcType="INTEGER" property="classId" />
+    <result column="test_date" jdbcType="VARCHAR" property="testDate" />
+    <result column="test_status" jdbcType="TINYINT" property="testStatus" />
+    <result column="begin_end_week" jdbcType="VARCHAR" property="beginEndWeek" />
+    <result column="learn_year" jdbcType="VARCHAR" property="learnYear" />
+    <association column="course_id" property="course" select="getCourse" />
+    <association column="class_id" property="stuClass" select="getStuClass" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    class_course_id, course_id, class_id, test_status, test_date, begin_end_week, learn_year
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from class_course
+    where class_course_id = #{classCourseId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByClass" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+        cc.class_course_id,
+        cc.course_id,
+        cc.class_id,
+        cc.test_date,
+        cc.test_status,
+        cc.begin_end_week,
+        cc.learn_year
+    FROM
+        class_course cc,
+        course c
+    WHERE
+        cc.course_id = c.course_id
+        AND c.zy_course = 0
+        AND cc.class_id = #{id}
+  </select>
+  <select id="selectZyByClass" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+        cc.class_course_id,
+        cc.course_id,
+        cc.class_id,
+        cc.test_date,
+        cc.test_status,
+        cc.begin_end_week,
+        cc.learn_year
+    FROM
+        class_course cc,
+        course c
+    WHERE
+        cc.course_id = c.course_id
+        AND c.zy_course = 1
+        AND cc.class_id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from class_course
+    where class_course_id = #{classCourseId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.ClassCourseLink">
+    <selectKey keyProperty="classCourseId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into class_course (course_id, class_id, teacher_id,
+        test_date,test_status, begin_end_week, learn_year
+      )
+    values (#{courseId,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER}, 
+      #{testDate}, #{testStatus}, #{beginEndWeek,jdbcType=VARCHAR}, #{learnYear,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.ClassCourseLink">
+    <selectKey keyProperty="classCourseId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into class_course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="classId != null">
+        class_id,
+      </if>
+      <if test="testDate != null">
+        test_date,
+      </if>
+      <if test="testStatus != null">
+        test_status,
+      </if>
+      <if test="beginEndWeek != null">
+        begin_end_week,
+      </if>
+      <if test="learnYear != null">
+        learn_year,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="classId != null">
+        #{classId,jdbcType=INTEGER},
+      </if>
+      <if test="testDate != null">
+        #{testDate},
+      </if>
+      <if test="testStatus != null">
+        #{testStatus},
+      </if>
+      <if test="beginEndWeek != null">
+        #{beginEndWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="learnYear != null">
+        #{learnYear,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.ClassCourseLink">
+    update class_course
+    <set>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="classId != null">
+        class_id = #{classId,jdbcType=INTEGER},
+      </if>
+      <if test="testDate != null">
+        test_date = #{testDate},
+      </if>
+      <if test="testStatus != null">
+        test_status = #{testStatus},
+      </if>
+      <if test="beginEndWeek != null">
+        begin_end_week = #{beginEndWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="learnYear != null">
+        learn_year = #{learnYear,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where class_course_id = #{classCourseId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.ClassCourseLink">
+    update class_course
+    set course_id = #{courseId,jdbcType=INTEGER},
+      class_id = #{classId,jdbcType=INTEGER},
+      test_date = #{testDate},
+      test_status = #{testStatus},
+      begin_end_week = #{beginEndWeek,jdbcType=VARCHAR},
+      learn_year = #{learnYear,jdbcType=VARCHAR}
+    where class_course_id = #{classCourseId,jdbcType=INTEGER}
+  </update>
+  <select id="getCourse" resultMap="cafuc.flyeat.zy.mapper.CourseMapper.LinkMap">
+    select course_id,course_name,zy_course,parent_id,weight from course where course_id=#{courseId}
+  </select>
+  <select id="getStuClass" resultMap="cafuc.flyeat.zy.mapper.StuClassMapper.LinkMap">
+    select class_id,class_name,zy_class,college_id,major_id,daoyuan_id,banzhuren_id from stu_class where class_id=#{classId}
+  </select>
+  <select id="getTeacher" resultMap="cafuc.flyeat.zy.mapper.TeacherMapper.BaseResultMap">
+    select teacher_id,teacher_name,nation,arrival_date,birthday,cpc,edu_bg,reward,college_id,staff_id,teacher_type from teacher where teacher_id=#{teacherId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into class_course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].classCourseId!=null">
+        class_course_id,
+      </if>
+      <if test="list[0].courseId!=null">
+        course_id,
+      </if>
+      <if test="list[0].classId!=null">
+        class_id,
+      </if>
+      <if test="list[0].testDate!=null">
+        test_date,
+      </if>
+      <if test="list[0].testStatus!=null">
+        test_status,
+      </if>
+      <if test="list[0].beginEndWeek!=null">
+        begin_end_week,
+      </if>
+      <if test="list[0].learnYear!=null">
+        learn_year,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.classCourseId!=null">
+          #{item.classCourseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.courseId!=null">
+          #{item.courseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.classId!=null">
+          #{item.classId,jdbcType=INTEGER},
+        </if>
+        <if test="item.testDate!=null">
+          #{item.testDate},
+        </if>
+        <if test="item.testStatus!=null">
+          #{item.testStatus},
+        </if>
+        <if test="item.beginEndWeek!=null">
+          #{item.beginEndWeek,jdbcType=VARCHAR},
+        </if>
+        <if test="item.learnYear!=null">
+          #{item.learnYear,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update class_course
+      <set>
+        <if test="item.courseId!=null">
+          course_id=#{item.courseId,jdbcType=INTEGER},
+        </if>
+        <if test="item.classId!=null">
+          class_id=#{item.classId,jdbcType=INTEGER},
+        </if>
+        <if test="item.testDate!=null">
+          test_date=#{item.testStatus},
+        </if>
+        <if test="item.testStatus!=null">
+          test_status=#{item.testStatus},
+        </if>
+        <if test="item.beginEndWeek!=null">
+          begin_end_week=#{item.beginEndWeek,jdbcType=VARCHAR},
+        </if>
+        <if test="item.learnYear!=null">
+          learn_year=#{item.learnYear,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where 
+      class_course_id = #{item.classCourseId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

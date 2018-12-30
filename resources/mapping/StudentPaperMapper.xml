@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafuc.flyeat.zy.mapper.StudentPaperMapper">
+  <resultMap id="BaseResultMap" type="cafuc.flyeat.zy.model.StudentPaper">
+    <id column="student_paper_id" jdbcType="INTEGER" property="studentPaperId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="paper_id" jdbcType="INTEGER" property="paperId" />
+    <result column="accept" jdbcType="TINYINT" property="accept" />
+    <result column="kaiti_id" jdbcType="INTEGER" property="kaitiId" />
+    <result column="kaiti_advice" jdbcType="TINYINT" property="kaitiAdvice" />
+    <result column="renwu_id" jdbcType="INTEGER" property="renwuId" />
+    <result column="renwu_oppion" jdbcType="TINYINT" property="renwuOppion" />
+    <result column="lunwen_id" jdbcType="INTEGER" property="lunwenId" />
+    <result column="lunwen_back" jdbcType="VARCHAR" property="lunwenBack" />
+    <result column="lunwen_oppion" jdbcType="TINYINT" property="lunwenOppion" />
+    <result column="lunwen_addvice" jdbcType="VARCHAR" property="lunwenAddvice" />
+    <result column="pingshen_id" jdbcType="INTEGER" property="pingshenId" />
+    <result column="pingshen_oppion" jdbcType="TINYINT" property="pingshenOppion" />
+    <result column="boos_oppion" jdbcType="TINYINT" property="boosOppion" />
+    <result column="compelete" jdbcType="BIT" property="compelete" />
+    <association column="student_id" property="student" select="getStudent" />
+    <association column="paper_id" property="paper" select="getPaper" />
+    <association column="kaiti_id" property="kaitiFile" select="getKaitiFile" />
+    <association column="renwu_id" property="renwuFile" select="getRenwuFile" />
+    <association column="lunwen_id" property="lunwenFile" select="getLunwenFile" />
+    <association column="pingshen_id" property="pingshenFile" select="getPingshenFile" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    student_paper_id, student_id, paper_id, accept, kaiti_id, kaiti_advice, renwu_id, 
+    renwu_oppion, lunwen_id, lunwen_back, lunwen_oppion, lunwen_addvice, pingshen_id, 
+    pingshen_oppion, boos_oppion, compelete
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from student_paper
+    where student_paper_id = #{studentPaperId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from student_paper
+    where student_paper_id = #{studentPaperId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cafuc.flyeat.zy.model.StudentPaper">
+    <selectKey keyProperty="studentPaperId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student_paper (student_id, paper_id, accept, 
+      kaiti_id, kaiti_advice, renwu_id, 
+      renwu_oppion, lunwen_id, lunwen_back, 
+      lunwen_oppion, lunwen_addvice, pingshen_id, 
+      pingshen_oppion, boos_oppion, compelete
+      )
+    values (#{studentId,jdbcType=INTEGER}, #{paperId,jdbcType=INTEGER}, #{accept,jdbcType=TINYINT}, 
+      #{kaitiId,jdbcType=INTEGER}, #{kaitiAdvice,jdbcType=TINYINT}, #{renwuId,jdbcType=INTEGER}, 
+      #{renwuOppion,jdbcType=TINYINT}, #{lunwenId,jdbcType=INTEGER}, #{lunwenBack,jdbcType=VARCHAR}, 
+      #{lunwenOppion,jdbcType=TINYINT}, #{lunwenAddvice,jdbcType=VARCHAR}, #{pingshenId,jdbcType=INTEGER}, 
+      #{pingshenOppion,jdbcType=TINYINT}, #{boosOppion,jdbcType=TINYINT}, #{compelete,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cafuc.flyeat.zy.model.StudentPaper">
+    <selectKey keyProperty="studentPaperId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student_paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="studentId != null">
+        student_id,
+      </if>
+      <if test="paperId != null">
+        paper_id,
+      </if>
+      <if test="accept != null">
+        accept,
+      </if>
+      <if test="kaitiId != null">
+        kaiti_id,
+      </if>
+      <if test="kaitiAdvice != null">
+        kaiti_advice,
+      </if>
+      <if test="renwuId != null">
+        renwu_id,
+      </if>
+      <if test="renwuOppion != null">
+        renwu_oppion,
+      </if>
+      <if test="lunwenId != null">
+        lunwen_id,
+      </if>
+      <if test="lunwenBack != null">
+        lunwen_back,
+      </if>
+      <if test="lunwenOppion != null">
+        lunwen_oppion,
+      </if>
+      <if test="lunwenAddvice != null">
+        lunwen_addvice,
+      </if>
+      <if test="pingshenId != null">
+        pingshen_id,
+      </if>
+      <if test="pingshenOppion != null">
+        pingshen_oppion,
+      </if>
+      <if test="boosOppion != null">
+        boos_oppion,
+      </if>
+      <if test="compelete != null">
+        compelete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="studentId != null">
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="paperId != null">
+        #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="accept != null">
+        #{accept,jdbcType=TINYINT},
+      </if>
+      <if test="kaitiId != null">
+        #{kaitiId,jdbcType=INTEGER},
+      </if>
+      <if test="kaitiAdvice != null">
+        #{kaitiAdvice,jdbcType=TINYINT},
+      </if>
+      <if test="renwuId != null">
+        #{renwuId,jdbcType=INTEGER},
+      </if>
+      <if test="renwuOppion != null">
+        #{renwuOppion,jdbcType=TINYINT},
+      </if>
+      <if test="lunwenId != null">
+        #{lunwenId,jdbcType=INTEGER},
+      </if>
+      <if test="lunwenBack != null">
+        #{lunwenBack,jdbcType=VARCHAR},
+      </if>
+      <if test="lunwenOppion != null">
+        #{lunwenOppion,jdbcType=TINYINT},
+      </if>
+      <if test="lunwenAddvice != null">
+        #{lunwenAddvice,jdbcType=VARCHAR},
+      </if>
+      <if test="pingshenId != null">
+        #{pingshenId,jdbcType=INTEGER},
+      </if>
+      <if test="pingshenOppion != null">
+        #{pingshenOppion,jdbcType=TINYINT},
+      </if>
+      <if test="boosOppion != null">
+        #{boosOppion,jdbcType=TINYINT},
+      </if>
+      <if test="compelete != null">
+        #{compelete,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cafuc.flyeat.zy.model.StudentPaper">
+    update student_paper
+    <set>
+      <if test="studentId != null">
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="paperId != null">
+        paper_id = #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="accept != null">
+        accept = #{accept,jdbcType=TINYINT},
+      </if>
+      <if test="kaitiId != null">
+        kaiti_id = #{kaitiId,jdbcType=INTEGER},
+      </if>
+      <if test="kaitiAdvice != null">
+        kaiti_advice = #{kaitiAdvice,jdbcType=TINYINT},
+      </if>
+      <if test="renwuId != null">
+        renwu_id = #{renwuId,jdbcType=INTEGER},
+      </if>
+      <if test="renwuOppion != null">
+        renwu_oppion = #{renwuOppion,jdbcType=TINYINT},
+      </if>
+      <if test="lunwenId != null">
+        lunwen_id = #{lunwenId,jdbcType=INTEGER},
+      </if>
+      <if test="lunwenBack != null">
+        lunwen_back = #{lunwenBack,jdbcType=VARCHAR},
+      </if>
+      <if test="lunwenOppion != null">
+        lunwen_oppion = #{lunwenOppion,jdbcType=TINYINT},
+      </if>
+      <if test="lunwenAddvice != null">
+        lunwen_addvice = #{lunwenAddvice,jdbcType=VARCHAR},
+      </if>
+      <if test="pingshenId != null">
+        pingshen_id = #{pingshenId,jdbcType=INTEGER},
+      </if>
+      <if test="pingshenOppion != null">
+        pingshen_oppion = #{pingshenOppion,jdbcType=TINYINT},
+      </if>
+      <if test="boosOppion != null">
+        boos_oppion = #{boosOppion,jdbcType=TINYINT},
+      </if>
+      <if test="compelete != null">
+        compelete = #{compelete,jdbcType=BIT},
+      </if>
+    </set>
+    where student_paper_id = #{studentPaperId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cafuc.flyeat.zy.model.StudentPaper">
+    update student_paper
+    set student_id = #{studentId,jdbcType=INTEGER},
+      paper_id = #{paperId,jdbcType=INTEGER},
+      accept = #{accept,jdbcType=TINYINT},
+      kaiti_id = #{kaitiId,jdbcType=INTEGER},
+      kaiti_advice = #{kaitiAdvice,jdbcType=TINYINT},
+      renwu_id = #{renwuId,jdbcType=INTEGER},
+      renwu_oppion = #{renwuOppion,jdbcType=TINYINT},
+      lunwen_id = #{lunwenId,jdbcType=INTEGER},
+      lunwen_back = #{lunwenBack,jdbcType=VARCHAR},
+      lunwen_oppion = #{lunwenOppion,jdbcType=TINYINT},
+      lunwen_addvice = #{lunwenAddvice,jdbcType=VARCHAR},
+      pingshen_id = #{pingshenId,jdbcType=INTEGER},
+      pingshen_oppion = #{pingshenOppion,jdbcType=TINYINT},
+      boos_oppion = #{boosOppion,jdbcType=TINYINT},
+      compelete = #{compelete,jdbcType=BIT}
+    where student_paper_id = #{studentPaperId,jdbcType=INTEGER}
+  </update>
+  <select id="getStudent" resultMap="cafuc.flyeat.zy.mapper.StudentMapper.BaseResultMap">
+    select student_id,student_name,student_number,nation,birthday,male,cpc,punishment,dormitory,college_id,major_id,company_id from student where student_id=#{studentId}
+  </select>
+  <select id="getPaper" resultMap="cafuc.flyeat.zy.mapper.PaperMapper.BaseResultMap">
+    select paper_id,paper_name,teacher_id,learn_year from paper where paper_id=#{paperId}
+  </select>
+  <select id="getKaitiFile" resultMap="cafuc.flyeat.zy.mapper.FileMapper.BaseResultMap">
+    select file_id,user_id,file_name,upload_time,addr from file where file_id=#{kaitiId}
+  </select>
+  <select id="getRenwuFile" resultMap="cafuc.flyeat.zy.mapper.FileMapper.BaseResultMap">
+    select file_id,user_id,file_name,upload_time,addr from file where file_id=#{renwuId}
+  </select>
+  <select id="getLunwenFile" resultMap="cafuc.flyeat.zy.mapper.FileMapper.BaseResultMap">
+    select file_id,user_id,file_name,upload_time,addr from file where file_id=#{lunwenId}
+  </select>
+  <select id="getPingshenFile" resultMap="cafuc.flyeat.zy.mapper.FileMapper.BaseResultMap">
+    select file_id,user_id,file_name,upload_time,addr from file where file_id=#{pingshenId}
+  </select>
+  <insert id="insertBatchSelective" parameterType="java.util.List">
+    insert into student_paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="list[0].studentPaperId!=null">
+        student_paper_id,
+      </if>
+      <if test="list[0].studentId!=null">
+        student_id,
+      </if>
+      <if test="list[0].paperId!=null">
+        paper_id,
+      </if>
+      <if test="list[0].accept!=null">
+        accept,
+      </if>
+      <if test="list[0].kaitiId!=null">
+        kaiti_id,
+      </if>
+      <if test="list[0].kaitiAdvice!=null">
+        kaiti_advice,
+      </if>
+      <if test="list[0].renwuId!=null">
+        renwu_id,
+      </if>
+      <if test="list[0].renwuOppion!=null">
+        renwu_oppion,
+      </if>
+      <if test="list[0].lunwenId!=null">
+        lunwen_id,
+      </if>
+      <if test="list[0].lunwenBack!=null">
+        lunwen_back,
+      </if>
+      <if test="list[0].lunwenOppion!=null">
+        lunwen_oppion,
+      </if>
+      <if test="list[0].lunwenAddvice!=null">
+        lunwen_addvice,
+      </if>
+      <if test="list[0].pingshenId!=null">
+        pingshen_id,
+      </if>
+      <if test="list[0].pingshenOppion!=null">
+        pingshen_oppion,
+      </if>
+      <if test="list[0].boosOppion!=null">
+        boos_oppion,
+      </if>
+      <if test="list[0].compelete!=null">
+        compelete,
+      </if>
+    </trim>
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+        <if test="item.studentPaperId!=null">
+          #{item.studentPaperId,jdbcType=INTEGER},
+        </if>
+        <if test="item.studentId!=null">
+          #{item.studentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.paperId!=null">
+          #{item.paperId,jdbcType=INTEGER},
+        </if>
+        <if test="item.accept!=null">
+          #{item.accept,jdbcType=TINYINT},
+        </if>
+        <if test="item.kaitiId!=null">
+          #{item.kaitiId,jdbcType=INTEGER},
+        </if>
+        <if test="item.kaitiAdvice!=null">
+          #{item.kaitiAdvice,jdbcType=TINYINT},
+        </if>
+        <if test="item.renwuId!=null">
+          #{item.renwuId,jdbcType=INTEGER},
+        </if>
+        <if test="item.renwuOppion!=null">
+          #{item.renwuOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.lunwenId!=null">
+          #{item.lunwenId,jdbcType=INTEGER},
+        </if>
+        <if test="item.lunwenBack!=null">
+          #{item.lunwenBack,jdbcType=VARCHAR},
+        </if>
+        <if test="item.lunwenOppion!=null">
+          #{item.lunwenOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.lunwenAddvice!=null">
+          #{item.lunwenAddvice,jdbcType=VARCHAR},
+        </if>
+        <if test="item.pingshenId!=null">
+          #{item.pingshenId,jdbcType=INTEGER},
+        </if>
+        <if test="item.pingshenOppion!=null">
+          #{item.pingshenOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.boosOppion!=null">
+          #{item.boosOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.compelete!=null">
+          #{item.compelete,jdbcType=BIT},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+    <foreach collection="list" index="index" item="item" separator=";">
+      update student_paper
+      <set>
+        <if test="item.studentId!=null">
+          student_id=#{item.studentId,jdbcType=INTEGER},
+        </if>
+        <if test="item.paperId!=null">
+          paper_id=#{item.paperId,jdbcType=INTEGER},
+        </if>
+        <if test="item.accept!=null">
+          accept=#{item.accept,jdbcType=TINYINT},
+        </if>
+        <if test="item.kaitiId!=null">
+          kaiti_id=#{item.kaitiId,jdbcType=INTEGER},
+        </if>
+        <if test="item.kaitiAdvice!=null">
+          kaiti_advice=#{item.kaitiAdvice,jdbcType=TINYINT},
+        </if>
+        <if test="item.renwuId!=null">
+          renwu_id=#{item.renwuId,jdbcType=INTEGER},
+        </if>
+        <if test="item.renwuOppion!=null">
+          renwu_oppion=#{item.renwuOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.lunwenId!=null">
+          lunwen_id=#{item.lunwenId,jdbcType=INTEGER},
+        </if>
+        <if test="item.lunwenBack!=null">
+          lunwen_back=#{item.lunwenBack,jdbcType=VARCHAR},
+        </if>
+        <if test="item.lunwenOppion!=null">
+          lunwen_oppion=#{item.lunwenOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.lunwenAddvice!=null">
+          lunwen_addvice=#{item.lunwenAddvice,jdbcType=VARCHAR},
+        </if>
+        <if test="item.pingshenId!=null">
+          pingshen_id=#{item.pingshenId,jdbcType=INTEGER},
+        </if>
+        <if test="item.pingshenOppion!=null">
+          pingshen_oppion=#{item.pingshenOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.boosOppion!=null">
+          boos_oppion=#{item.boosOppion,jdbcType=TINYINT},
+        </if>
+        <if test="item.compelete!=null">
+          compelete=#{item.compelete,jdbcType=BIT},
+        </if>
+      </set>
+      where 
+      student_paper_id = #{item.studentPaperId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>
